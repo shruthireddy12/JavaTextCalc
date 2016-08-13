@@ -10,7 +10,7 @@
 <p>
     <label>Equation</label>
     <input type ="text" style="font-size:10pt;height:20px;width:400px;"
-           name ="textEquation"/>
+           name ="textEquation" value="${param.textEquation}" size="25"/>
     <input type="submit" style="height:25px;width:200px" value="Calculate">
 </p>
 <label>Answer</label>
