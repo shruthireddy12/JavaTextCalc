@@ -2,11 +2,16 @@ package textbasedcalculator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.codec.binary.StringUtils;
+
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.ScriptEngine;
@@ -21,7 +26,6 @@ public class Calculator extends HttpServlet {
 
 	}
 
-	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
@@ -43,15 +47,31 @@ public class Calculator extends HttpServlet {
 				equationValue += "/";
 			} else if (value.equalsIgnoreCase("times")) {
 				equationValue += "*";
+			} else if (value.equalsIgnoreCase("square")) {
+				equationValue += "*";
+			} else if (value.equalsIgnoreCase("squareroot")) {
+				equationValue += "squareroot";
 			}
 
 			else {
-				equationValue += convertStringToValue(value);
+				equationValue += ConvertStringToValue(value);
+
 			}
 		}
+		if (equationValue.contains("*")) {
+			equationValue = equationValue + equationValue.replace("*", "");
+		}
+		String result = "";
+		if (equationValue.contains("squareroot")) {
+			equationValue = String.valueOf(Math.sqrt(Double.parseDouble(equationValue.replace("squareroot", ""))));
 
-		System.out.println(equationValue);
-		String result = ReplaceNumberswithStrings(Calculate(equationValue).toString());
+			result = ReplaceNumberswithStrings(equationValue).toString();
+
+		} else {
+			System.out.println(equationValue);
+			result = ReplaceNumberswithStrings(Calculate(equationValue).toString());
+
+		}
 
 		request.setAttribute("answer", result);
 		request.getRequestDispatcher("CalculatorPage.jsp").forward(request, response);
@@ -72,7 +92,7 @@ public class Calculator extends HttpServlet {
 	}
 
 	// Converting string to value
-	public static int convertStringToValue(String equationString) {
+	public static int ConvertStringToValue(String equationString) {
 		switch (equationString.toLowerCase()) {
 		case "zero":
 			return 0;
@@ -101,10 +121,10 @@ public class Calculator extends HttpServlet {
 
 	public static String ReplaceNumberswithStrings(String equationValue) {
 
-		String replacedString = equationValue.replace(".", "point ").replace("-", "Negative ").replace("0", "Zero ")
-				.replace("1", "One ").replace("2", "Two ").replace("3", "Three ").replace("4", "Four ")
-				.replace("5", "Five ").replace("6", "Six ").replace("7", "Seven ").replace("8", "Eight ")
-				.replace("9", "Nine ");
+		String replacedString = equationValue.replace(".", "point ").replace("-", "negative ").replace("0", "zero ")
+				.replace("1", "one ").replace("2", "two ").replace("3", "three ").replace("4", "four ")
+				.replace("5", "five ").replace("6", "six ").replace("7", "seven ").replace("8", "eight ")
+				.replace("9", "nine ");
 
 		return replacedString;
 	}
